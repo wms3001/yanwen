@@ -3,6 +3,7 @@ package yanwen
 import (
 	"github.com/golang-module/dongle"
 	"strconv"
+	"time"
 )
 
 type YanWen struct {
@@ -17,7 +18,15 @@ type YanWen struct {
 }
 
 func (yanWen *YanWen) Channel() {
-
+	yanWen.Timestamp = time.Now().UnixMilli()
+	yanWen.Method = "express.channel.getlist"
+	reqUrl := yanWen.Url + "/api/order?" +
+		"user_id=" + yanWen.UserId +
+		"&method=" + yanWen.Method +
+		"&format=" + yanWen.Format +
+		"&timestamp=" + strconv.FormatInt(yanWen.Timestamp, 10) +
+		"&sign=" + yanWen.Sign() +
+		"&version=" + yanWen.Version
 }
 
 func (yanWen *YanWen) Sign() string {
