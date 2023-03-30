@@ -1,6 +1,7 @@
 package yanwen
 
 import (
+	"github.com/wms3001/yanwen/model"
 	"log"
 	"testing"
 	"time"
@@ -29,4 +30,28 @@ func TestYanWen_Sign(t *testing.T) {
 func TestYanWen_Channel(t *testing.T) {
 	channlResp := yanwen.Channel()
 	log.Println(channlResp)
+}
+
+func TestYanWen_Country(t *testing.T) {
+	countryResp := yanwen.Country()
+	log.Println(countryResp)
+}
+
+func TestYanWen_Warehouse(t *testing.T) {
+	var channlId = model.YanWenWarehouseRequest{}
+	channlId.ChannelId = ""
+	yanwen.Data = channlId
+	warehouseResp := yanwen.Warehouse()
+	log.Println(warehouseResp)
+	channlId.ChannelId = "481"
+	yanwen.Data = channlId
+	countryResp1 := yanwen.Warehouse()
+	log.Println(countryResp1)
+}
+
+func TestYanWen_Order(t *testing.T) {
+	var order = model.YanWenOrder{}
+	yanwen.Data = order
+	orderResp := yanwen.Order()
+	log.Println(orderResp)
 }

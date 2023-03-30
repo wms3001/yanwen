@@ -11,14 +11,14 @@ import (
 )
 
 type YanWen struct {
-	Url       string `json:"url"`
-	UserId    string `json:"userId"`
-	Format    string `json:"format"`
-	Method    string `json:"method"`
-	Timestamp int64  `json:"timestamp"`
-	Version   string `json:"version"`
-	ApiToken  string `json:"apiToken"`
-	Data      string `json:"data"`
+	Url       string      `json:"url"`
+	UserId    string      `json:"userId"`
+	Format    string      `json:"format"`
+	Method    string      `json:"method"`
+	Timestamp int64       `json:"timestamp"`
+	Version   string      `json:"version"`
+	ApiToken  string      `json:"apiToken"`
+	Data      interface{} `json:"data"`
 }
 
 func init() {
@@ -43,6 +43,57 @@ func (yanWen *YanWen) Channel() model.YanWenChannlResponse {
 	return channlResponse
 }
 
+func (yanWen *YanWen) Country() model.YanWenCountryResponse {
+	yanWen.Timestamp = time.Now().UnixMilli()
+	yanWen.Method = "common.country.getlist"
+	reqUrl := yanWen.Url + "/api/order?" +
+		"user_id=" + yanWen.UserId +
+		"&method=" + yanWen.Method +
+		"&format=" + yanWen.Format +
+		"&timestamp=" + strconv.FormatInt(yanWen.Timestamp, 10) +
+		"&sign=" + yanWen.Sign() +
+		"&version=" + yanWen.Version
+	body := []byte{}
+	resp := PostReuqest(reqUrl, body)
+	var countryResponse model.YanWenCountryResponse
+	json.Unmarshal([]byte(resp), &countryResponse)
+	return countryResponse
+}
+
+func (yanWen *YanWen) Warehouse() model.YanWenWarehouseResponse {
+	yanWen.Timestamp = time.Now().UnixMilli()
+	yanWen.Method = "common.warehouse.getlist"
+	reqUrl := yanWen.Url + "/api/order?" +
+		"user_id=" + yanWen.UserId +
+		"&method=" + yanWen.Method +
+		"&format=" + yanWen.Format +
+		"&timestamp=" + strconv.FormatInt(yanWen.Timestamp, 10) +
+		"&sign=" + yanWen.Sign() +
+		"&version=" + yanWen.Version
+	body, _ := json.Marshal(yanWen.Data)
+	resp := PostReuqest(reqUrl, body)
+	var warehouseResponse model.YanWenWarehouseResponse
+	json.Unmarshal([]byte(resp), &warehouseResponse)
+	return warehouseResponse
+}
+
+func (yanWen *YanWen) Order() model.YanWenOrderResponse {
+	yanWen.Timestamp = time.Now().UnixMilli()
+	yanWen.Method = "express.order.create"
+	reqUrl := yanWen.Url + "/api/order?" +
+		"user_id=" + yanWen.UserId +
+		"&method=" + yanWen.Method +
+		"&format=" + yanWen.Format +
+		"&timestamp=" + strconv.FormatInt(yanWen.Timestamp, 10) +
+		"&sign=" + yanWen.Sign() +
+		"&version=" + yanWen.Version
+	body, _ := json.Marshal(yanWen.Data)
+	resp := PostReuqest(reqUrl, body)
+	var orderResponse model.YanWenOrderResponse
+	json.Unmarshal([]byte(resp), &orderResponse)
+	return orderResponse
+}
+
 func (yanWen *YanWen) Sign() string {
 	var signStr string
 	if yanWen.Data == "" {
@@ -54,9 +105,10 @@ func (yanWen *YanWen) Sign() string {
 			yanWen.Version +
 			yanWen.ApiToken
 	} else {
+		body, _ := json.Marshal(yanWen.Data)
 		signStr = yanWen.ApiToken +
 			yanWen.UserId +
-			yanWen.Data +
+			string(body) +
 			yanWen.Format +
 			yanWen.Method +
 			strconv.FormatInt(yanWen.Timestamp, 10) +
