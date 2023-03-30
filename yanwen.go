@@ -1,7 +1,11 @@
 package yanwen
 
 import (
+	"encoding/json"
+	"github.com/go-resty/resty/v2"
 	"github.com/golang-module/dongle"
+	"github.com/wms3001/yanwen/model"
+	"log"
 	"strconv"
 	"time"
 )
@@ -17,7 +21,12 @@ type YanWen struct {
 	Data      string `json:"data"`
 }
 
-func (yanWen *YanWen) Channel() {
+func init() {
+	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds | log.Llongfile | log.Lmsgprefix)
+	log.SetPrefix("Message:")
+}
+
+func (yanWen *YanWen) Channel() model.YanWenChannlResponse {
 	yanWen.Timestamp = time.Now().UnixMilli()
 	yanWen.Method = "express.channel.getlist"
 	reqUrl := yanWen.Url + "/api/order?" +
@@ -27,6 +36,11 @@ func (yanWen *YanWen) Channel() {
 		"&timestamp=" + strconv.FormatInt(yanWen.Timestamp, 10) +
 		"&sign=" + yanWen.Sign() +
 		"&version=" + yanWen.Version
+	body := []byte{}
+	resp := PostReuqest(reqUrl, body)
+	var channlResponse model.YanWenChannlResponse
+	json.Unmarshal([]byte(resp), &channlResponse)
+	return channlResponse
 }
 
 func (yanWen *YanWen) Sign() string {
@@ -50,4 +64,24 @@ func (yanWen *YanWen) Sign() string {
 			yanWen.ApiToken
 	}
 	return dongle.Encrypt.FromString(signStr).ByMd5().ToHexString()
+}
+
+func PostReuqest(url string, body []byte) string {
+	client := resty.New()
+	resp, err := client.R().
+		SetHeader("Content-Type", "application/json").
+		SetBody(body).
+		//SetResult(). // or SetResult(AuthSuccess{}).
+		Post(url)
+	if err != nil {
+		response := model.YanWenResponse{
+			Success: false,
+			Code:    "-1",
+			Message: err.Error(),
+		}
+		str, _ := json.Marshal(response)
+		return string(str)
+	} else {
+		return string(resp.Body())
+	}
 }

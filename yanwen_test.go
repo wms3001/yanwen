@@ -1,7 +1,7 @@
 package yanwen
 
 import (
-	"github.com/wms3001/wlog"
+	"log"
 	"testing"
 	"time"
 )
@@ -14,14 +14,19 @@ var yanwen = YanWen{
 	Timestamp: 0,
 	Version:   "V1.0",
 	ApiToken:  "D6140AA383FD8515B09028C586493DDB",
-	Data:      "11",
+	Data:      "",
 }
 
-var msg = wlog.Wlog{}
+//var msg = wlog.Wlog{}
 
 func TestYanWen_Sign(t *testing.T) {
 	yanwen.Method = "express.channel.getlist"
 	yanwen.Timestamp = time.Now().UnixMicro()
 	sign := yanwen.Sign()
-	msg.Show(sign)
+	log.Println(sign)
+}
+
+func TestYanWen_Channel(t *testing.T) {
+	channlResp := yanwen.Channel()
+	log.Println(channlResp)
 }
