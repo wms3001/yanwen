@@ -94,6 +94,40 @@ func (yanWen *YanWen) Order() model.YanWenOrderResponse {
 	return orderResponse
 }
 
+func (yanWen *YanWen) Label() model.YanWenLabelResponse {
+	yanWen.Timestamp = time.Now().UnixMilli()
+	yanWen.Method = "express.order.label.get"
+	reqUrl := yanWen.Url + "/api/order?" +
+		"user_id=" + yanWen.UserId +
+		"&method=" + yanWen.Method +
+		"&format=" + yanWen.Format +
+		"&timestamp=" + strconv.FormatInt(yanWen.Timestamp, 10) +
+		"&sign=" + yanWen.Sign() +
+		"&version=" + yanWen.Version
+	body, _ := json.Marshal(yanWen.Data)
+	resp := PostReuqest(reqUrl, body)
+	var labelResponse model.YanWenLabelResponse
+	json.Unmarshal([]byte(resp), &labelResponse)
+	return labelResponse
+}
+
+func (yanWen *YanWen) KrPccc() model.YanWenKrPcccResponse {
+	yanWen.Timestamp = time.Now().UnixMilli()
+	yanWen.Method = "common.verify.kr.pccc"
+	reqUrl := yanWen.Url + "/api/order?" +
+		"user_id=" + yanWen.UserId +
+		"&method=" + yanWen.Method +
+		"&format=" + yanWen.Format +
+		"&timestamp=" + strconv.FormatInt(yanWen.Timestamp, 10) +
+		"&sign=" + yanWen.Sign() +
+		"&version=" + yanWen.Version
+	body, _ := json.Marshal(yanWen.Data)
+	resp := PostReuqest(reqUrl, body)
+	var krResponse model.YanWenKrPcccResponse
+	json.Unmarshal([]byte(resp), &krResponse)
+	return krResponse
+}
+
 func (yanWen *YanWen) Sign() string {
 	var signStr string
 	if yanWen.Data == "" {
