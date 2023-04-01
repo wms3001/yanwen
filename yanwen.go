@@ -128,6 +128,60 @@ func (yanWen *YanWen) KrPccc() model.YanWenKrPcccResponse {
 	return krResponse
 }
 
+func (yanWen *YanWen) USAddress() model.YanWenUSAddressResponse {
+	yanWen.Timestamp = time.Now().UnixMilli()
+	yanWen.Method = "common.verify.us.address"
+	reqUrl := yanWen.Url + "/api/order?" +
+		"user_id=" + yanWen.UserId +
+		"&method=" + yanWen.Method +
+		"&format=" + yanWen.Format +
+		"&timestamp=" + strconv.FormatInt(yanWen.Timestamp, 10) +
+		"&sign=" + yanWen.Sign() +
+		"&version=" + yanWen.Version
+	body, _ := json.Marshal(yanWen.Data)
+	resp := PostReuqest(reqUrl, body)
+	log.Println(resp)
+	var usAddressResponse model.YanWenUSAddressResponse
+	json.Unmarshal([]byte(resp), &usAddressResponse)
+	return usAddressResponse
+}
+
+func (yanWen *YanWen) OrderInfo() model.YanWenOrderInfoResponse {
+	yanWen.Timestamp = time.Now().UnixMilli()
+	yanWen.Method = "express.order.get"
+	reqUrl := yanWen.Url + "/api/order?" +
+		"user_id=" + yanWen.UserId +
+		"&method=" + yanWen.Method +
+		"&format=" + yanWen.Format +
+		"&timestamp=" + strconv.FormatInt(yanWen.Timestamp, 10) +
+		"&sign=" + yanWen.Sign() +
+		"&version=" + yanWen.Version
+	body, _ := json.Marshal(yanWen.Data)
+	resp := PostReuqest(reqUrl, body)
+	log.Println(resp)
+	var orderInfoResponse model.YanWenOrderInfoResponse
+	json.Unmarshal([]byte(resp), &orderInfoResponse)
+	return orderInfoResponse
+}
+
+func (yanWen *YanWen) Cancel() model.YanWenCancelResponse {
+	yanWen.Timestamp = time.Now().UnixMilli()
+	yanWen.Method = "express.order.cancel"
+	reqUrl := yanWen.Url + "/api/order?" +
+		"user_id=" + yanWen.UserId +
+		"&method=" + yanWen.Method +
+		"&format=" + yanWen.Format +
+		"&timestamp=" + strconv.FormatInt(yanWen.Timestamp, 10) +
+		"&sign=" + yanWen.Sign() +
+		"&version=" + yanWen.Version
+	body, _ := json.Marshal(yanWen.Data)
+	resp := PostReuqest(reqUrl, body)
+	log.Println(resp)
+	var cancelResponse model.YanWenCancelResponse
+	json.Unmarshal([]byte(resp), &cancelResponse)
+	return cancelResponse
+}
+
 func (yanWen *YanWen) Sign() string {
 	var signStr string
 	if yanWen.Data == "" {

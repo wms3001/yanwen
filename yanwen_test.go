@@ -131,3 +131,30 @@ func TestYanWen_KrPccc(t *testing.T) {
 	krPcccResp := yanwen.KrPccc()
 	log.Println(krPcccResp)
 }
+
+func TestYanWen_USAddress(t *testing.T) {
+	var usAddressRequest = model.YanWenUSAddressRequest{}
+	usAddressRequest.ReceiverInfo.Address = "25815 North Cabernet Lane"
+	usAddressRequest.ReceiverInfo.State = "AZ"
+	usAddressRequest.ReceiverInfo.City = "Paulden"
+	usAddressRequest.ReceiverInfo.ZipCode = "86334"
+	yanwen.Data = usAddressRequest
+	usAddressResp := yanwen.USAddress()
+	log.Println(usAddressResp)
+}
+
+func TestYanWen_OrderInfo(t *testing.T) {
+	var orderInfoRequest = model.YanWenOrderInfoRequest{}
+	orderInfoRequest.WaybillNumber = "LR039896495CN"
+	yanwen.Data = orderInfoRequest
+	orderInfoResp := yanwen.OrderInfo()
+	log.Println(orderInfoResp)
+}
+
+func TestYanWen_Cancel(t *testing.T) {
+	var cancelRequest = model.YanWenCancelRequest{}
+	cancelRequest.WaybillNumber = "LR039896495CN"
+	cancelRequest.Note = "test"
+	cancelResp := yanwen.Cancel()
+	log.Println(cancelResp)
+}

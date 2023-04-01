@@ -186,3 +186,57 @@ krPcccRequest.ReceiverInfo = receiverInfo
 yanwen.Data = krPcccRequest
 krPcccResp := yanwen.KrPccc()
 ```
+9. 美国地址验证
+```go
+var yanwen = YanWen{
+	Url:       "https://ejf-fat.yw56.com.cn",
+	UserId:    "100000",
+	Format:    "json",
+	Method:    "",
+	Timestamp: 0,
+	Version:   "V1.0",
+	ApiToken:  "D6140AA383FD8515B09028C586493DDB",
+	Data:      "",
+}
+var usAddressRequest = model.YanWenUSAddressRequest{}
+usAddressRequest.ReceiverInfo.Address = "25815 North Cabernet Lane"
+usAddressRequest.ReceiverInfo.State = "AZ"
+usAddressRequest.ReceiverInfo.City = "Paulden"
+usAddressRequest.ReceiverInfo.ZipCode = "86334"
+yanwen.Data = usAddressRequest
+usAddressResp := yanwen.USAddress()
+```
+10. 获取订单信息
+```go
+var yanwen = YanWen{
+	Url:       "https://ejf-fat.yw56.com.cn",
+	UserId:    "100000",
+	Format:    "json",
+	Method:    "",
+	Timestamp: 0,
+	Version:   "V1.0",
+	ApiToken:  "D6140AA383FD8515B09028C586493DDB",
+	Data:      "",
+}
+var orderInfoRequest = model.YanWenOrderInfoRequest{}
+orderInfoRequest.WaybillNumber = "LR039896495CN"
+yanwen.Data = orderInfoRequest
+orderInfoResp := yanwen.OrderInfo()
+```
+11. 取消订单
+```go
+var yanwen = YanWen{
+	Url:       "https://ejf-fat.yw56.com.cn",
+	UserId:    "100000",
+	Format:    "json",
+	Method:    "",
+	Timestamp: 0,
+	Version:   "V1.0",
+	ApiToken:  "D6140AA383FD8515B09028C586493DDB",
+	Data:      "",
+}
+var cancelRequest = model.YanWenCancelRequest{}
+cancelRequest.WaybillNumber = "LR039896495CN"
+cancelRequest.Note = "test"
+cancelResp := yanwen.Cancel()
+```
